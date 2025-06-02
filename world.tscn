@@ -1,9 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://byvem1q0s33il"]
+[gd_scene load_steps=6 format=3 uid="uid://byvem1q0s33il"]
 
 [ext_resource type="Texture2D" uid="uid://cqhohrwfcd088" path="res://icon.svg" id="1_fj7yv"]
 [ext_resource type="Script" uid="uid://csbky6f2txrmg" path="res://player_movements.gd" id="1_tlwt5"]
 [ext_resource type="Script" uid="uid://6t5iof7pdtwi" path="res://anchor_movements.gd" id="2_tlwt5"]
-[ext_resource type="Script" uid="uid://bec8hh6qd2054" path="res://line_2d.gd" id="3_aqk2v"]
 [ext_resource type="PackedScene" uid="uid://dr1wcgf5ip32k" path="res://debug.tscn" id="5_036b0"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_tlwt5"]
@@ -25,11 +24,12 @@ collide_with_bodies = false
 
 [node name="Line2D" type="Line2D" parent="Player"]
 unique_name_in_owner = true
-visible = false
-scale = Vector2(11.3158, 4.605)
-points = PackedVector2Array(0, 0, 13.98, 0)
-width = 1.0
-script = ExtResource("3_aqk2v")
+top_level = true
+z_index = 750
+points = PackedVector2Array(0, 0, 0, 100)
+width = 6.0
+default_color = Color(1, 0.45098, 1, 1)
+joint_mode = 2
 
 [node name="Anchor" type="Node2D" parent="."]
 unique_name_in_owner = true
@@ -42,7 +42,7 @@ self_modulate = Color(0.189463, 0.0981626, 0.0218364, 1)
 texture = ExtResource("1_fj7yv")
 
 [node name="Area2D" type="Area2D" parent="."]
-position = Vector2(181, -62)
+position = Vector2(142, -62)
 scale = Vector2(9.52, 4.28)
 metadata/_edit_group_ = true
 
@@ -50,6 +50,17 @@ metadata/_edit_group_ = true
 shape = SubResource("RectangleShape2D_tlwt5")
 
 [node name="Polygon2D" type="Polygon2D" parent="Area2D"]
+polygon = PackedVector2Array(-10, -10, -10, 10, 10, 10, 10, -10)
+
+[node name="Area2D2" type="Area2D" parent="."]
+position = Vector2(506, 534)
+scale = Vector2(9.52, 4.28)
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D2"]
+shape = SubResource("RectangleShape2D_tlwt5")
+
+[node name="Polygon2D" type="Polygon2D" parent="Area2D2"]
 polygon = PackedVector2Array(-10, -10, -10, 10, 10, 10, 10, -10)
 
 [node name="Camera2D" type="Camera2D" parent="."]
