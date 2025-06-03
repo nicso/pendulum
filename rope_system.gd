@@ -43,8 +43,7 @@ func _ready():
 func _process(delta):
 	if anchor and player and rope_points.size() >= 2:
 		# Appliquer la gravité au dernier point de la corde
-		if not player.is_on_floor():
-			apply_gravity_to_last_point(delta)
+		apply_gravity_to_last_point(delta)
 		
 		# Mettre à jour la corde avec la physique
 		update_rope_physics()
@@ -52,10 +51,143 @@ func _process(delta):
 		# Vérifier et corriger les pénétrations
 		fix_rope_penetrations()
 		
-		# Positionner le joueur sur le dernier point
-		player.global_position = rope_points[rope_points.size() - 1]
+		# Gérer les collisions du joueur avec la contrainte de la corde
+		handle_player_physics_with_rope_constraint(delta)
 		
 		queue_redraw()
+
+func handle_player_physics_with_rope_constraint(delta: float):
+	"""Gère la physique du joueur en tenant compte des collisions ET de la contrainte de corde"""
+	if not player:
+		return
+	
+	# Position désirée selon la corde
+	var rope_target_position = rope_points[rope_points.size() - 1]
+	
+	# Si le joueur est un CharacterBody2D, utiliser sa physique native
+	if player is CharacterBody2D:
+		handle_character_body_with_rope(player, rope_target_position, delta)
+	else:
+		# Pour les autres types de nœuds, utiliser un système de collision manuel
+		handle_manual_collision_with_rope(rope_target_position, delta)
+
+func handle_character_body_with_rope(character_body: CharacterBody2D, rope_target: Vector2, delta: float):
+	"""Gère un CharacterBody2D avec contrainte de corde"""
+	
+	# Calculer le mouvement désiré selon la corde
+	var desired_movement = rope_target - character_body.global_position
+	
+	# Limiter le mouvement selon la longueur de corde disponible
+	var max_distance = rope_length * 0.99  # Petite marge
+	var current_rope_length = calculate_rope_length_to_player()
+	
+	if current_rope_length + desired_movement.length() > max_distance:
+		# Limiter le mouvement
+		var available_distance = max_distance - current_rope_length
+		if available_distance > 0:
+			desired_movement = desired_movement.normalized() * min(desired_movement.length(), available_distance)
+		else:
+			desired_movement = Vector2.ZERO
+	
+	# Appliquer le mouvement avec les collisions natives
+	character_body.velocity = desired_movement / delta
+	character_body.move_and_slide()
+	
+	# Mettre à jour le dernier point de la corde avec la position réelle du joueur
+	rope_points[rope_points.size() - 1] = character_body.global_position
+	
+	# Ajuster la vélocité de la corde selon le mouvement réel
+	var actual_movement = character_body.global_position - (rope_target - desired_movement)
+	last_point_velocity = actual_movement / delta
+
+func handle_manual_collision_with_rope(rope_target: Vector2, delta: float):
+	"""Gère les collisions manuellement pour les nœuds non-CharacterBody2D"""
+	if not player:
+		return
+	
+	var start_position = player.global_position
+	var desired_position = rope_target
+	
+	# Vérifier s'il y a une collision sur le chemin
+	var collision_info = check_player_collision(start_position, desired_position)
+	
+	if collision_info.has_collision:
+		# Bouger jusqu'au point de collision
+		player.global_position = collision_info.safe_position
+		
+		# Ajuster la vélocité (rebond ou glissement)
+		var normal = collision_info.normal
+		last_point_velocity = last_point_velocity - 2 * last_point_velocity.dot(normal) * normal
+		last_point_velocity *= 0.8  # Perte d'énergie au contact
+	else:
+		# Mouvement libre
+		player.global_position = desired_position
+	
+	# Mettre à jour le point de corde
+	rope_points[rope_points.size() - 1] = player.global_position
+
+func check_player_collision(start: Vector2, end: Vector2) -> Dictionary:
+	"""Vérifie les collisions du joueur"""
+	var result = {"has_collision": false, "safe_position": end, "normal": Vector2.ZERO}
+	
+	if not player:
+		return result
+	
+	# Obtenir la forme de collision du joueur
+	var collision_shape = null
+	for child in player.get_children():
+		if child is CollisionShape2D:
+			collision_shape = child
+			break
+	
+	if not collision_shape or not collision_shape.shape:
+		return result
+	
+	var space_state = get_world_2d().direct_space_state
+	if not space_state:
+		return result
+	
+	# Créer une requête de mouvement avec la forme du joueur
+	var query = PhysicsShapeQueryParameters2D.new()
+	query.shape = collision_shape.shape
+	query.transform = Transform2D(0, end + collision_shape.position)
+	query.collision_mask = 1
+	query.collide_with_areas = false
+	query.collide_with_bodies = true
+	
+	var collisions = space_state.intersect_shape(query)
+	
+	if collisions.size() > 0:
+		# Il y a collision, trouver une position sûre
+		result.has_collision = true
+		
+		# Utiliser un raycast pour trouver le point de contact
+		var ray_query = PhysicsRayQueryParameters2D.create(start, end)
+		ray_query.collision_mask = 1
+		ray_query.collide_with_areas = false
+		ray_query.collide_with_bodies = true
+		
+		var ray_result = space_state.intersect_ray(ray_query)
+		
+		if not ray_result.is_empty():
+			result.normal = ray_result.normal
+			# Position sûre avec une petite marge
+			result.safe_position = ray_result.position - (end - start).normalized() * 5.0
+		else:
+			result.safe_position = start
+	
+	return result
+
+func calculate_rope_length_to_player() -> float:
+	"""Calcule la longueur de corde jusqu'à l'avant-dernier point (sans compter le segment final vers le joueur)"""
+	if rope_points.size() < 2:
+		return 0.0
+	
+	var length = 0.0
+	for i in range(rope_points.size() - 2):
+		length += rope_points[i].distance_to(rope_points[i + 1])
+	
+	return length
 
 func get_obstacles():
 	"""Récupère tous les obstacles de la scène"""
