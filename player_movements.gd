@@ -13,7 +13,10 @@ var rope_elasticity := 1280
 var anchor_points := [Vector2(0,0),Vector2(0,0)]
 var collider
 @onready var debug: Control = %Debug
-
+var desired_position := Vector2.ZERO
+func _ready() -> void:
+	desired_position = global_position
+	
 func _physics_process(delta: float) -> void:
 	if anchor_points.size() > line.points.size():
 		line.add_point(Vector2.ZERO)
@@ -22,13 +25,16 @@ func _physics_process(delta: float) -> void:
 	assign_start_and_end()
 	draw_segments()
 	detect_collision_on_segments()
+	remove_close_point()
 	
+	
+	desired_position += gravity * delta 
 	if calculate_rope_total_length() > rope_length_max:
-		global_position -= (global_position - anchor_points[anchor_points.size()-2]).normalized() * rope_elasticity * delta
+		desired_position -= (desired_position - anchor_points[anchor_points.size()-2]).normalized() * rope_elasticity * delta
 	if calculate_rope_total_length() < rope_length_max:
-		global_position += (global_position - anchor_points[anchor_points.size()-2]).normalized() * rope_elasticity * delta
-	global_position += gravity * delta 
+		desired_position += (desired_position - anchor_points[anchor_points.size()-2]).normalized() * rope_elasticity * delta
 	
+	global_position = global_position.lerp(desired_position, delta * 3.0)
 
 func calculate_rope_total_length() -> int:
 	var length := 0.0
@@ -40,7 +46,20 @@ func calculate_rope_total_length() -> int:
 func assign_start_and_end():
 	anchor_points[0] = anchor.global_position 
 	anchor_points[anchor_points.size() - 1] = global_position
+
+func remove_close_point():
+	var distance_to_last_point = global_position.distance_to(anchor_points[anchor_points.size()-2])
+	if distance_to_last_point < 90.0:
+		anchor_points.remove_at(anchor_points.size()-2)
+		
+func get_angle_to_last_point() -> float:
+	var angle = (global_position-anchor_points[anchor_points.size()-2]).normalized().dot( Vector2.UP )
 	
+	#debug.get_child(0).text = str( angle )
+	return angle
+
+#func remove_points_from_angle():
+	#if anchor_points[anchor_points.size()-2] >
 
 func distribute_segments():
 	pass
@@ -61,12 +80,14 @@ func detect_collision_on_segments():
 			var space_state = get_world_2d().direct_space_state
 			var result = space_state.intersect_ray(ray_param) 
 			if result:
-				var exist := false
-				for point: Vector2 in anchor_points:
-					if point.distance_squared_to(result.get("position")) < 0.2:
-						exist = true
-				if not exist:
-					add_segment(result.get("position"))
+				var distance = result.get("position").distance_to(global_position)
+				if distance > 200.0:
+					var exist := false
+					for point: Vector2 in anchor_points:
+						if point.distance_squared_to(result.get("position")) < 0.2 :
+							exist = true
+					if not exist :
+						add_segment(result.get("position"))
 				
 			
 	pass

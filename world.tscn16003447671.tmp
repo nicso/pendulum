@@ -1,18 +1,15 @@
-[gd_scene load_steps=8 format=3 uid="uid://byvem1q0s33il"]
+[gd_scene load_steps=6 format=3 uid="uid://byvem1q0s33il"]
 
 [ext_resource type="Texture2D" uid="uid://cqhohrwfcd088" path="res://icon.svg" id="1_fj7yv"]
 [ext_resource type="Script" uid="uid://csbky6f2txrmg" path="res://player_movements.gd" id="1_tlwt5"]
 [ext_resource type="Script" uid="uid://6t5iof7pdtwi" path="res://anchor_movements.gd" id="2_tlwt5"]
 [ext_resource type="PackedScene" uid="uid://dr1wcgf5ip32k" path="res://debug.tscn" id="5_036b0"]
-[ext_resource type="Script" uid="uid://2tjqwvc45c57" path="res://rope_system.gd" id="5_dwbse"]
-[ext_resource type="Script" uid="uid://dqk77gnosfxi8" path="res://RopeRenderer.gd" id="6_dwbse"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_tlwt5"]
 
 [node name="World" type="Node2D"]
 
 [node name="Player" type="Node2D" parent="."]
-visible = false
 position = Vector2(26, 174)
 script = ExtResource("1_tlwt5")
 metadata/_edit_group_ = true
@@ -55,7 +52,7 @@ shape = SubResource("RectangleShape2D_tlwt5")
 [node name="Polygon2D" type="Polygon2D" parent="Area2D"]
 polygon = PackedVector2Array(-10, -10, -10, 10, 10, 10, 10, -10)
 
-[node name="Area2D2" type="StaticBody2D" parent="."]
+[node name="Area2D2" type="Area2D" parent="."]
 position = Vector2(506, 534)
 scale = Vector2(9.52, 4.28)
 metadata/_edit_group_ = true
@@ -76,25 +73,3 @@ offset_top = -714.0
 offset_right = -1038.0
 offset_bottom = -714.0
 scale = Vector2(5.06718, 5.04197)
-
-[node name="Player2" type="Node2D" parent="."]
-position = Vector2(-127, 120)
-
-[node name="Sprite2D" type="Sprite2D" parent="Player2"]
-position = Vector2(-294, 349)
-texture = ExtResource("1_fj7yv")
-
-[node name="RopeSystem" type="Node2D" parent="."]
-position = Vector2(-436, -268)
-script = ExtResource("5_dwbse")
-
-[node name="Sprite2D" type="Sprite2D" parent="RopeSystem"]
-self_modulate = Color(1, 0, 1, 1)
-texture = ExtResource("1_fj7yv")
-
-[node name="Anchor" type="StaticBody2D" parent="RopeSystem"]
-
-[node name="Line2D" type="Line2D" parent="RopeSystem"]
-visible = false
-top_level = true
-script = ExtResource("6_dwbse")

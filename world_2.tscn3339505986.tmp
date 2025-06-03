@@ -1,0 +1,71 @@
+[gd_scene load_steps=7 format=3 uid="uid://ufw2onojkktt"]
+
+[ext_resource type="Script" uid="uid://2tjqwvc45c57" path="res://rope_system.gd" id="1_3m1hs"]
+[ext_resource type="Texture2D" uid="uid://cqhohrwfcd088" path="res://icon.svg" id="1_u5ktm"]
+[ext_resource type="Script" uid="uid://vcbqwiq5e256" path="res://player.gd" id="3_hlada"]
+[ext_resource type="Script" uid="uid://tl5ilvhycxi8" path="res://anchor_controller.gd" id="3_ia432"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ia432"]
+radius = 71.87
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hlada"]
+size = Vector2(200, 132.54)
+
+[node name="world2" type="Node2D"]
+
+[node name="RopeSystem" type="Node2D" parent="." node_paths=PackedStringArray("anchor", "player")]
+script = ExtResource("1_3m1hs")
+anchor = NodePath(".")
+player = NodePath("../Player")
+rope_length = null
+rope_color = null
+rope_width = null
+collision_margin = null
+max_iterations = null
+corner_detection_distance = null
+gravity = null
+damping = null
+
+[node name="Sprite2D" type="Sprite2D" parent="RopeSystem"]
+self_modulate = Color(0, 0, 0, 1)
+texture = ExtResource("1_u5ktm")
+
+[node name="Player" type="CharacterBody2D" parent="."]
+position = Vector2(0, 280)
+collision_layer = 2
+collision_mask = 2
+script = ExtResource("3_hlada")
+metadata/_edit_group_ = true
+
+[node name="Sprite2D" type="Sprite2D" parent="Player"]
+self_modulate = Color(0.606754, 1, 0.652464, 1)
+texture = ExtResource("1_u5ktm")
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
+shape = SubResource("CircleShape2D_ia432")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(0.57, 0.57)
+
+[node name="StaticBody2D" type="StaticBody2D" parent="." groups=["obstacle"]]
+position = Vector2(-167, 177)
+collision_layer = 3
+collision_mask = 3
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+shape = SubResource("RectangleShape2D_hlada")
+
+[node name="AnchorController" type="Node" parent="." node_paths=PackedStringArray("rope_system")]
+script = ExtResource("3_ia432")
+rope_system = NodePath("../RopeSystem")
+
+[node name="StaticBody2D2" type="StaticBody2D" parent="." groups=["obstacle"]]
+position = Vector2(3, 718)
+collision_layer = 3
+collision_mask = 3
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D2"]
+shape = SubResource("RectangleShape2D_hlada")
