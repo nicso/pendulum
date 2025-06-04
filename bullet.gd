@@ -53,7 +53,7 @@ func initialize(pos: Vector2, dir: Vector2, bullet_speed: float = 800, bullet_da
 func deactivate():
 	visible = false
 	set_process(false)
-	collision.disabled = true
+	collision.call_deferred("set_disabled", true)
 	timer = 0.0
 
 func _on_body_entered(body):
@@ -66,4 +66,4 @@ func _on_area_entered(area):
 	# Collision avec d'autres zones (power-ups, obstacles, etc.)
 	if area.has_method("on_bullet_hit"):
 		area.on_bullet_hit(self)
-	BulletManager.return_bullet(self)
+		BulletManager.return_bullet(self)

@@ -29,6 +29,8 @@ position = Vector2(0, -871)
 script = ExtResource("1_3m1hs")
 anchor = NodePath(".")
 player = NodePath("../Player")
+rope_width = 1.0
+debug_points = true
 metadata/_edit_group_ = true
 
 [node name="Sprite2D" type="Sprite2D" parent="RopeSystem"]
@@ -62,7 +64,7 @@ texture = ExtResource("1_u5ktm")
 zoom = Vector2(0.57, 0.57)
 
 [node name="StaticBody2D" type="StaticBody2D" parent="." groups=["obstacle"]]
-position = Vector2(-361, -321)
+position = Vector2(-323, -525)
 collision_layer = 3
 collision_mask = 3
 metadata/_edit_group_ = true
@@ -79,13 +81,13 @@ metadata/_edit_group_ = true
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D2"]
 shape = SubResource("RectangleShape2D_fu0tf")
 
-[node name="StaticBody2D3" type="StaticBody2D" parent="." groups=["obstacle"]]
+[node name="circle" type="StaticBody2D" parent="." groups=["obstacle"]]
 position = Vector2(428, -229)
 collision_layer = 3
 collision_mask = 3
 metadata/_edit_group_ = true
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D3"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="circle"]
 shape = SubResource("CircleShape2D_hlada")
 
 [node name="StaticBody2D4" type="StaticBody2D" parent="." groups=["obstacle"]]
@@ -117,6 +119,20 @@ metadata/_edit_group_ = true
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D6"]
 shape = SubResource("RectangleShape2D_hlada")
 
-[node name="Icon" type="Sprite2D" parent="."]
-modulate = Color(1, 1, 1, 0.211765)
-texture = ExtResource("1_u5ktm")
+[node name="StaticBody2D3" type="StaticBody2D" parent="." groups=["obstacle"]]
+position = Vector2(-494, -162)
+collision_layer = 3
+collision_mask = 3
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D3"]
+shape = SubResource("RectangleShape2D_hlada")
+
+[node name="StaticBody2D7" type="StaticBody2D" parent="." groups=["obstacle"]]
+position = Vector2(-335, 210)
+collision_layer = 3
+collision_mask = 3
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D7"]
+shape = SubResource("RectangleShape2D_hlada")

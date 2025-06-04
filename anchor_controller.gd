@@ -29,7 +29,7 @@ func handle_input(delta):
 	if Input.is_action_pressed("game_move_right"):
 		anchor_input.x += 1
 	
-	if Input.is_action_pressed("game_move_up") and rope_system.rope_length > min_rope_lenght:
+	if Input.is_action_pressed("game_move_up") and not player.is_on_ceiling() and rope_system.rope_length > min_rope_lenght:
 		rope_system.rope_length -= 400 * delta
 	if Input.is_action_pressed("game_move_down") and not player.is_on_floor() and rope_system.rope_length < max_rope_lenght:
 		rope_system.rope_length += 400 * delta
