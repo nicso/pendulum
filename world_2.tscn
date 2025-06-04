@@ -19,7 +19,12 @@ radius = 94.74
 
 [node name="world2" type="Node2D"]
 
+[node name="AnchorController" type="Node" parent="." node_paths=PackedStringArray("rope_system")]
+script = ExtResource("3_ia432")
+rope_system = NodePath("../RopeSystem")
+
 [node name="RopeSystem" type="Node2D" parent="." node_paths=PackedStringArray("anchor", "player")]
+unique_name_in_owner = true
 position = Vector2(0, -871)
 script = ExtResource("1_3m1hs")
 anchor = NodePath(".")
@@ -31,7 +36,7 @@ self_modulate = Color(0, 0, 0, 1)
 texture = ExtResource("1_u5ktm")
 
 [node name="Player" type="CharacterBody2D" parent="."]
-position = Vector2(0, 280)
+position = Vector2(0, -328)
 collision_layer = 2
 collision_mask = 2
 script = ExtResource("3_hlada")
@@ -45,7 +50,15 @@ metadata/_edit_group_ = true
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
 shape = SubResource("CircleShape2D_ia432")
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="WeaponPoint" type="Marker2D" parent="Player"]
+position = Vector2(95, -5)
+
+[node name="Sprite2D" type="Sprite2D" parent="Player/WeaponPoint"]
+modulate = Color(1, 0, 0, 1)
+scale = Vector2(0.14, 0.14)
+texture = ExtResource("1_u5ktm")
+
+[node name="Camera2D" type="Camera2D" parent="Player"]
 zoom = Vector2(0.57, 0.57)
 
 [node name="StaticBody2D" type="StaticBody2D" parent="." groups=["obstacle"]]
@@ -56,10 +69,6 @@ metadata/_edit_group_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
 shape = SubResource("RectangleShape2D_hlada")
-
-[node name="AnchorController" type="Node" parent="." node_paths=PackedStringArray("rope_system")]
-script = ExtResource("3_ia432")
-rope_system = NodePath("../RopeSystem")
 
 [node name="StaticBody2D2" type="StaticBody2D" parent="." groups=["obstacle"]]
 position = Vector2(-423, 615)
@@ -107,3 +116,7 @@ metadata/_edit_group_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D6"]
 shape = SubResource("RectangleShape2D_hlada")
+
+[node name="Icon" type="Sprite2D" parent="."]
+modulate = Color(1, 1, 1, 0.211765)
+texture = ExtResource("1_u5ktm")

@@ -19,8 +19,8 @@ var rope_points: Array[Vector2] = []
 @export var corner_detection_distance: float = 10.0  # Distance pour détecter les coins
 
 # Paramètres de gravité
-@export var gravity: float = 980.0  # Pixels par seconde²
-@export var damping: float = 0.98   # Amortissement pour stabiliser
+@export var gravity: float = 1980.0  # Pixels par seconde²
+@export var damping: float = 0.96   # Amortissement pour stabiliser
 
 # Variables pour la physique du dernier point de la corde
 var last_point_velocity: Vector2 = Vector2.ZERO
